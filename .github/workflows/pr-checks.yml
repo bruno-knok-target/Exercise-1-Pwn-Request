@@ -1,0 +1,23 @@
+name: PR Checks
+
+on:
+  pull_request_target:         # ← dangerous: runs with base-repo token, even for forks
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write          # elevated — needed for image publishing
+
+    steps:
+      - name: Checkout PR code          # ← dangerous: checks out the ATTACKER's code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Run checks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # ← explicitly passed to the shell
+        run: bash ./scripts/run-checks.sh   # ← runs whatever the attacker put in that file
