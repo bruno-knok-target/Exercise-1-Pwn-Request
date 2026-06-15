@@ -1,7 +1,7 @@
 name: PR Checks
 
 on:
-  pull_request_target:         # ← dangerous: runs with base-repo token, even for forks
+  pull_request:         # ←token is read-only; fork PRs get no write access
     branches: [main]
 
 jobs:
